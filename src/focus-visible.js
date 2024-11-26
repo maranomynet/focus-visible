@@ -6,6 +6,17 @@
  * @see https://github.com/WICG/focus-visible
  */
 function applyFocusVisiblePolyfill(scope) {
+  var scopeRootElm;
+  if (scope.nodeType === Node.DOCUMENT_FRAGMENT_NODE && scope.host {
+    scopeRootElm = scope.host;
+  } else if (scope.nodeType === Node.DOCUMENT_NODE) {
+    scopeRootElm = scope.documentElement;
+  }
+  if (scopeRootElm && scopeRootElm.hasAttribute('data-js-focus-visible')) {
+    // Don't apply the polyfill more than once to each scope.
+    return;
+  }
+
   var hadKeyboardEvent = true;
   var hadFocusVisibleRecently = false;
   var hadFocusVisibleRecentlyTimeout = null;

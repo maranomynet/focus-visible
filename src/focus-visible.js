@@ -273,6 +273,19 @@ function applyFocusVisiblePolyfill(scope) {
   }
 }
 
+function supportsFocusVisible() {
+  const style = document.createElement('style');
+  let isSupported = false;
+  try {
+    document.head.appendChild(style);
+    style.sheet!.insertRule(':focus-visible {}');
+    isSupported = true;
+  } catch {} finally {
+    style.remove();
+  }
+  return isSupported;
+}
+
 // It is important to wrap all references to global window and document in
 // these checks to support server-side rendering use cases
 // @see https://github.com/WICG/focus-visible/issues/199
@@ -297,7 +310,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
   window.dispatchEvent(event);
 }
 
-if (typeof document !== 'undefined') {
+if (typeof document !== 'undefined' && !supportsFocusVisible()) {
   // Apply the polyfill to the global document, so that no JavaScript
   // coordination is required to use the polyfill in the top-level document:
   applyFocusVisiblePolyfill(document);
